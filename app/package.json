@@ -1,0 +1,15 @@
+{
+  "name": "@itedya/sor-tokajuk-pracownicy-app",
+  "version": "1.0.0",
+  "description": "Projekt pracownicy - FRONTEND",
+  "main": "index.js",
+  "keywords": [
+    "itedya",
+    "pracownicy-app"
+  ],
+  "author": "itedya",
+  "private": true,
+  "dependencies": {
+    "knex": "^2.4.2"
+  }
+}

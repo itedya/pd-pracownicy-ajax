@@ -1,0 +1,22 @@
+version: '3.9'
+
+services:
+  database:
+    image: mysql/mysql-server:8.0
+    container_name: pracownicy-database
+    environment:
+      - MYSQL_USER=administrator
+      - MYSQL_PASSWORD=pracownicy-password
+      - MYSQL_DATABASE=pracownicy
+  app:
+    build: ./api
+    container_name: pracownicy-api
+    ports:
+      - "80:3000"
+    environment:
+      WAIT_HOSTS: "database:3306"
+    depends_on:
+      database:
+        condition: service_healthy
+    volumes:
+      - ./api:/app

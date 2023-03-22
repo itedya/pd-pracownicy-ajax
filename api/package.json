@@ -1,0 +1,28 @@
+{
+  "name": "@itedya/sor-tokajuk-pracownicy-api",
+  "version": "1.0.0",
+  "description": "Projekt pracownicy - API",
+  "main": "src/main.js",
+  "type": "module",
+  "scripts": {
+    "start": "node .",
+    "setup:aliases": "node ./src/commands/setup-aliases.command.js",
+    "migrate": "node ./src/commands/migrate.command.js",
+    "watch": "nodemon --exec npm start"
+  },
+  "keywords": [
+    "itedya",
+    "pracownicy-api"
+  ],
+  "author": "itedya",
+  "private": true,
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "knex": "^2.4.2",
+    "mysql2": "^3.2.0",
+    "nodemon": "^2.0.22"
+  }
+}
