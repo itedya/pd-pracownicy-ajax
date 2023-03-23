@@ -1,12 +1,11 @@
-CREATE TABLE IF NOT EXISTS `etaty` (
-  `NAZWA` varchar(15) NOT NULL,
-  `PLACA_OD` float DEFAULT NULL,
-  `PLACA_DO` float DEFAULT NULL,
-  PRIMARY KEY (`NAZWA`)
+CREATE TABLE IF NOT EXISTS `jobs` (
+  `name` varchar(15) NOT NULL,
+  `wage_from` float DEFAULT NULL,
+  `wage_to` float DEFAULT NULL,
+  PRIMARY KEY (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
-INSERT INTO `etaty` (`NAZWA`, `PLACA_OD`, `PLACA_DO`) VALUES
+INSERT INTO `jobs` (`name`, `wage_from`, `wage_to`) VALUES
 	('ADIUNKT', 2510, 3000),
 	('ASYSTENT', 1500, 2100),
 	('DOKTORANT', 800, 1000),
@@ -14,38 +13,35 @@ INSERT INTO `etaty` (`NAZWA`, `PLACA_OD`, `PLACA_DO`) VALUES
 	('PROFESOR', 3000, 4000),
 	('SEKRETARKA', 1470, 1650);
 	
-CREATE TABLE IF NOT EXISTS `zespoly` (
-  `ID_ZESP` int(11) PRIMARY KEY AUTO_INCREMENT,
-  `NAZWA` varchar(20) DEFAULT NULL,
-  `ADRES` varchar(20) DEFAULT NULL
+CREATE TABLE IF NOT EXISTS `teams` (
+  `id` int(11) PRIMARY KEY AUTO_INCREMENT,
+  `name` varchar(20) DEFAULT NULL,
+  `address` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
-INSERT INTO `zespoly` (`ID_ZESP`, `NAZWA`, `ADRES`) VALUES
+INSERT INTO `teams` (`id`, `name`, `address`) VALUES
 	(10, 'ADMINISTRACJA', 'PIOTROWO 2'),
 	(20, 'SYSTEMY ROZPROSZONE', 'PIOTROWO 3A'),
 	(30, 'SYSTEMY EKSPERCKIE', 'STRZELECKA 14'),
 	(40, 'ALGORYTMY', 'WIENIAWSKIEGO 16'),
 	(50, 'BADANIA OPERACYJNE', 'MIELZYNSKIEGO 30');
 
-CREATE TABLE IF NOT EXISTS `pracownicy` (
-  `ID_PRAC` int(11) NOT NULL AUTO_INCREMENT,
-  `NAZWISKO` varchar(15) DEFAULT NULL,
-  `IMIE` varchar(20) DEFAULT NULL,
-  `ETAT` varchar(20) DEFAULT NULL,
-  `ID_SZEFA` int(11) DEFAULT NULL,
-  `ZATRUDNIONY` date DEFAULT NULL,
-  `PLACA_POD` float DEFAULT NULL,
-  `PLACA_DOD` float DEFAULT NULL,
-  `ID_ZESP` int(11) DEFAULT NULL,
-  PRIMARY KEY (`ID_PRAC`),
-  KEY `FK_pracownicy_pracownicy` (`ID_SZEFA`),
-  KEY `FK_pracownicy_zespoly` (`ID_ZESP`),
-  CONSTRAINT `FK_pracownicy_pracownicy` FOREIGN KEY (`ID_SZEFA`) REFERENCES `pracownicy` (`ID_PRAC`),
-  CONSTRAINT `FK_pracownicy_zespoly` FOREIGN KEY (`ID_ZESP`) REFERENCES `zespoly` (`ID_ZESP`)
+CREATE TABLE IF NOT EXISTS `employees` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `last_name` varchar(15) DEFAULT NULL,
+  `first_name` varchar(20) DEFAULT NULL,
+  `job` varchar(20) DEFAULT NULL,
+  `boss_id` int(11) DEFAULT NULL,
+  `employeed_from` date DEFAULT NULL,
+  `basic_wage` float DEFAULT NULL,
+  `additional_wage` float DEFAULT NULL,
+  `team_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `FK_employees_employees` FOREIGN KEY (`boss_id`) REFERENCES `employees` (`id`),
+  CONSTRAINT `FK_employees_teams` FOREIGN KEY (`team_id`) REFERENCES `teams` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=211 DEFAULT CHARSET=utf8;
 
-INSERT INTO `pracownicy` (`ID_PRAC`, `NAZWISKO`, `IMIE`, `ETAT`, `ID_SZEFA`, `ZATRUDNIONY`, `PLACA_POD`, `PLACA_DOD`, `ID_ZESP`) VALUES
+INSERT INTO `employees` (`id`, `last_name`, `first_name`, `job`, `boss_id`, `employeed_from`, `basic_wage`, `additional_wage`, `team_id`) VALUES
 	(100, 'Marecki', 'Jan', 'DYREKTOR', NULL, '1968-01-01', 4730, 980.5, 10),
 	(110, 'Janicki', 'Karol', 'PROFESOR', 100, '1973-05-01', 3350, 610, 40),
 	(120, 'Nowicki', 'Pawel', 'PROFESOR', 100, '1977-01-09', 3070, NULL, 30),

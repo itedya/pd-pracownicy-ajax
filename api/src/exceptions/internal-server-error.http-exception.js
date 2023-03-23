@@ -2,6 +2,8 @@ import HttpException from "./http-exception.js";
 
 class InternalServerErrorHttpException extends HttpException {
     constructor(err) {
+        super("Internal server error", 500);
+
         if (err instanceof Error) {
             this.err = err;
         } else if (typeof err === "string") {
@@ -11,10 +13,6 @@ class InternalServerErrorHttpException extends HttpException {
                 "Argument err must be a string or error class instance!"
             );
         }
-
-        this.message = this.err.message;
-
-        super("Internal server error", 500);
     }
 
     report(req, res) {

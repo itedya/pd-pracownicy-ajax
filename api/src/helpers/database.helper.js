@@ -4,7 +4,7 @@ import fs from "fs/promises";
 import __srcpath from "./srcpath.helper.js";
 
 const isDatabaseInitialized = async () => {
-    const requiredTables = ["etaty", "zespoly", "pracownicy"];
+    const requiredTables = ["jobs", "teams", "employees"];
 
     const existingTables = await db
         .raw(
@@ -27,21 +27,22 @@ const migrateDatabase = async () => {
     const sql = await fs.readFile(sqlPath, { encoding: "utf-8" });
 
     const splittedQueries = sql
-        .replace("\t", "")
-        .replace("\r", "")
-        .replace("\n", "")
+        .replaceAll("\t", "")
+        .replaceAll("\r", "")
+        .replaceAll("\n", "")
+        .replaceAll(/$\s+/g, "")
+        .replaceAll(/\s+^/g, "")
         .split(";")
-        .map(splittedQuery => {
+        .map((splittedQuery) => {
             return splittedQuery
-                .replace(/$\s+/, "")
-                .replace(/\s+^/, "")
-        });
+                .replaceAll(/$\s+/g, "")
+                .replaceAll(/\s+^/g, "");
+        })
+        .filter(splittedQuery => splittedQuery !== "");
 
     for (const splittedQuery of splittedQueries) {
         await db.raw(splittedQuery);
     }
-
-    return sql;
 };
 
 export { isDatabaseInitialized, migrateDatabase };

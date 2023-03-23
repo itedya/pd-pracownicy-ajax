@@ -6,6 +6,7 @@ import {
     migrateDatabase,
 } from "./helpers/database.helper.js";
 import cors from "cors";
+import teamRouter from "./router/team.router.js";
 
 const createApp = async () => {
     if (!(await isDatabaseInitialized())) {
@@ -17,6 +18,8 @@ const createApp = async () => {
 
     app.use(cors("*"));
     app.use(bodyParser.json({}));
+
+    app.use("/team", teamRouter);
 
     app.use("*", errorController.notFound);
 
