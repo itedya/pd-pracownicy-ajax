@@ -19,6 +19,9 @@ const generateNumberMessage = (attributeName) =>
 const generateStringMessage = (attributeName) =>
     `Pole ${attributeName} musi być ciągiem znaków!`;
 
+const generateDateMessage = (attributeName) =>
+    `Pole ${attributeName} musi być datą!`;
+
 const messageGenerators = {
     generateRequiredMessage,
     generateMinNumberMessage,
@@ -26,7 +29,8 @@ const messageGenerators = {
     generateMaxNumberMessage,
     generateMaxLengthMessage,
     generateNumberMessage,
-    generateStringMessage
+    generateStringMessage,
+    generateDateMessage
 };
 
 export default messageGenerators;
