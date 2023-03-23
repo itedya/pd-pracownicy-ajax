@@ -7,6 +7,7 @@ import {
 } from "./helpers/database.helper.js";
 import cors from "cors";
 import teamRouter from "./router/team.router.js";
+import jobRouter from "./router/job.router.js";
 
 const createApp = async () => {
     if (!(await isDatabaseInitialized())) {
@@ -20,6 +21,7 @@ const createApp = async () => {
     app.use(bodyParser.json({}));
 
     app.use("/team", teamRouter);
+    app.use("/job", jobRouter);
 
     app.use("*", errorController.notFound);
 

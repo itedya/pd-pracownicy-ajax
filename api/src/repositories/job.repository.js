@@ -80,11 +80,11 @@ const deleteJob = async (trx, name) => {
 }
 
 const jobRepository = {
-    getJobs,
-    findJobByName,
-    createJob,
-    updateJob,
-    deleteJob
+    get: getJobs,
+    findByName: findJobByName,
+    create: createJob,
+    update: updateJob,
+    delete: deleteJob
 }
 
 export default jobRepository;

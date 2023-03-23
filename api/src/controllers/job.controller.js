@@ -13,13 +13,13 @@ const get = errorCatcherMiddleware(async (req, res, next) => {
 });
 
 const getJobs = async (req, res, next) => {
-    const jobs = await jobRepository.getJobs();
+    const jobs = await jobRepository.get();
 
     res.status(200).json(jobs.map(job => job.sanitize()));
 };
 
 const findJobByName = async (req, res, next, name) => {
-    const job = await jobRepository.findJobByName(name);
+    const job = await jobRepository.findByName(name);
 
     res.status(200).json(job.sanitize());
 };
@@ -27,7 +27,7 @@ const findJobByName = async (req, res, next, name) => {
 const createJob = errorCatcherMiddleware(async (req, res, next) => {
     const data = await createJobRequest.validate(req.body);
 
-    const job = await db.transaction((trx) => jobRepository.createJob(trx, data.name, data.wageFrom, data.wageTo));
+    const job = await db.transaction((trx) => jobRepository.create(trx, data.name, data.wageFrom, data.wageTo));
 
     res.status(200).json(job.sanitize());
 });
@@ -35,7 +35,7 @@ const createJob = errorCatcherMiddleware(async (req, res, next) => {
 const updateJob = errorCatcherMiddleware(async (req, res, next) => {
     const data = await updateJobRequest.validate(req.body);
 
-    const job = await db.transaction(trx => jobRepository.updateJob(trx, data.name, data.wageFrom, data.wageTo));
+    const job = await db.transaction(trx => jobRepository.update(trx, data.name, data.wageFrom, data.wageTo));
 
     res.status(200).json(job.sanitize());
 });
@@ -43,14 +43,16 @@ const updateJob = errorCatcherMiddleware(async (req, res, next) => {
 const deleteJob = errorCatcherMiddleware(async (req, res, next) => {
     const data = await deleteJobRequest.validate(req.body);
 
-    await db.transaction(trx => jobRepository.deleteJob(trx, data.name));
+    await db.transaction(trx => jobRepository.delete(trx, data.name));
 
     res.status(200).send();
 });
 
 const jobController = {
     get,
-    createJob,
-    updateJob,
-    deleteJob,
+    create: createJob,
+    update: updateJob,
+    delete: deleteJob,
 };
+
+export default jobController;
