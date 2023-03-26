@@ -65,20 +65,26 @@ const createTeam = (trx, name, address) => {
  * @returns
  */
 const updateTeam = (trx, id, name, address) => {
-    return db.table("teams").update({ name, address }).where("id", id);
+    return trx.table("teams").update({ name, address }).where("id", id);
 };
 
 /**
  * Delete team by id
- * 
+ *
  * @param {import('knex').Knex} trx Transaction object
- * @param {number} id 
+ * @param {number} id
  * @returns {Promise<}
  */
 const deleteTeam = (trx, id) => {
-    return db.table("teams").where("id", id).del();
+    return trx.table("teams").where("id", id).del();
 };
 
-const teamRepository = { getTeams, findTeamById, createTeam, updateTeam, deleteTeam };
+const teamRepository = {
+    get: getTeams,
+    findById: findTeamById,
+    create: createTeam,
+    update: updateTeam,
+    delete: deleteTeam,
+};
 
 export default teamRepository;

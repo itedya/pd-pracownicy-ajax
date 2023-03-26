@@ -10,11 +10,13 @@ const team = yup.object({
     name: yup
         .string()
         .min(1, messageGenerators.generateMinLengthMessage("nazwa", 1))
+        .max(20, messageGenerators.generateMaxLengthMessage("nazwa", 20))
         .required(messageGenerators.generateRequiredMessage("nazwa"))
         .typeError(messageGenerators.generateStringMessage("nazwa")),
     address: yup
         .string()
         .min(1, messageGenerators.generateMinLengthMessage("adres", 1))
+        .max(20, messageGenerators.generateMaxLengthMessage("adres", 20))
         .required(messageGenerators.generateRequiredMessage("adres"))
         .typeError(messageGenerators.generateStringMessage("adres")),
 });

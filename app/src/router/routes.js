@@ -1,7 +1,10 @@
 import WelcomePage from "../views/WelcomePage.vue";
 import EmployeeListPage from "../views/EmployeeListPage.vue";
+import TeamListPage from "../views/TeamListPage.vue";
 import CreateEmployeePage from "../views/CreateEmployeePage.vue";
+import CreateTeamPage from "../views/CreateTeamPage.vue";
 import UpdateEmployeePage from "../views/UpdateEmployeePage.vue";
+import UpdateTeamPage from "../views/UpdateTeamPage.vue";
 
 const routes = [
   {
@@ -23,6 +26,21 @@ const routes = [
     path: "/employee/:id/update",
     name: "employee-update",
     component: UpdateEmployeePage
+  },
+  {
+    path: "/team",
+    name: "team-list",
+    component: TeamListPage
+  },
+  {
+    path: "/team/create",
+    name: 'team-create',
+    component: CreateTeamPage
+  },
+  {
+    path: '/team/:id/update',
+    name: 'team-update',
+    component: UpdateTeamPage
   }
 ];
 
