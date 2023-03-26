@@ -38,6 +38,7 @@ CREATE TABLE IF NOT EXISTS `employees` (
   `team_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT `FK_employees_employees` FOREIGN KEY (`boss_id`) REFERENCES `employees` (`id`),
+  CONSTRAINT `FK_employees_jobs` FOREIGN KEY(`job`) REFERENCES `jobs` (`name`),
   CONSTRAINT `FK_employees_teams` FOREIGN KEY (`team_id`) REFERENCES `teams` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=211 DEFAULT CHARSET=utf8;
 

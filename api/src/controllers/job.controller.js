@@ -7,9 +7,10 @@ import {
     findJobByNameRequest,
     updateJobRequest,
 } from "@itedya/sor-tokajuk-pracownicy-ajax-validation";
+import ValidationHttpException from "../exceptions/validation.http-exception.js";
 
 const get = errorCatcherMiddleware(async (req, res, next) => {
-    const data = await findJobByNameRequest.validate(req.body);
+    const data = await findJobByNameRequest.validate(req.query);
 
     if (data.name) {
         await findJobByName(req, res, next, data.name);
@@ -25,7 +26,7 @@ const getJobs = async (req, res, next) => {
 };
 
 const findJobByName = async (req, res, next, name) => {
-    const job = await jobRepository.findByName(name);
+    const job = await db.transaction(trx => jobRepository.findByName(trx, name));
 
     res.status(200).json(job.sanitize());
 };
@@ -43,17 +44,36 @@ const createJob = errorCatcherMiddleware(async (req, res, next) => {
 const updateJob = errorCatcherMiddleware(async (req, res, next) => {
     const data = await updateJobRequest.validate(req.body);
 
+    console.log(data);
+
     const job = await db.transaction((trx) =>
-        jobRepository.update(trx, data.name, data.wageFrom, data.wageTo)
+        jobRepository.update(trx, data.oldName, data.name, data.wageFrom, data.wageTo)
     );
 
-    res.status(200).json(job.sanitize());
+    res.status(200).json(job.sanitize()); 
 });
 
 const deleteJob = errorCatcherMiddleware(async (req, res, next) => {
     const data = await deleteJobRequest.validate(req.body);
 
-    await db.transaction((trx) => jobRepository.delete(trx, data.name));
+    await db
+        .transaction(async (trx) => {
+            const job = await jobRepository.findByName(trx, data.name);
+            if (job === null) {
+                throw new ValidationHttpException([
+                    "Nazwa etatu jest nieprawidłowa.",
+                ]);
+            }
+
+            await jobRepository.delete(trx, data.name);
+        })
+        .catch((err) => {
+            if (err.errno === 1451) {
+                throw new ValidationHttpException(["Ten etat jest już w użyciu przez jednego z pracowników."]);
+            } else {
+                throw err;
+            }
+        });
 
     res.status(200).send();
 });

@@ -37,7 +37,13 @@ const findJobByNameRequest = yup.object({
 });
 
 const createJobRequest = job;
-const updateJobRequest = job;
+const updateJobRequest = job.concat(yup.object({
+    oldName: yup
+        .string()
+        .min(1, messageGenerators.generateMinLengthMessage("stara nazwa", 1))
+        .required(messageGenerators.generateRequiredMessage("stara nazwa"))
+        .typeError(messageGenerators.generateStringMessage("stara nazwa")),
+}));
 const deleteJobRequest = job.pick(["name"]);
 
 export {

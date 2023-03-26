@@ -6,6 +6,7 @@ const errorCatcherMiddleware = (func) => async (req, res, next) => {
     try {
         await func(req, res, next);
     } catch (err) {
+        console.log(err);
         if (err.constructor.name === "ValidationError") {
             err = new ValidationHttpException(err.errors);
         }

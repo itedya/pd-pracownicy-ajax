@@ -55,38 +55,42 @@ const createJob = async (trx, name, wageFrom, wageTo) => {
 
 /**
  * Update job
- * 
- * @param {import("knex").Knex} trx Transaction object 
+ *
+ * @param {import("knex").Knex} trx Transaction object
+ * @param {string} oldName Job old name
  * @param {string} name Job name
  * @param {number} wageFrom Job wage from
  * @param {number} wageTo Job wage to
  * @returns {Promise<Job>}
  */
-const updateJob = async (trx, name, wageFrom, wageTo) => {
+const updateJob = async (trx, oldName, name, wageFrom, wageTo) => {
+    console.log(oldName);
+    await trx.table("employees").update({ job: name }).where("job", oldName);
+
     return trx
         .table("jobs")
         .update({ name, wage_from: wageFrom, wage_to: wageTo })
-        .where("name", name)
+        .where("name", oldName)
         .then(() => new Job(name, wageFrom, wageTo));
 };
 
 /**
  * Delete job
- * 
+ *
  * @param {import("knex").Knex} trx Transaction object
  * @param {string} name Job name
  * @returns {Promise<Job>}
  */
 const deleteJob = async (trx, name) => {
     return trx.table("jobs").where("name", name).del();
-}
+};
 
 const jobRepository = {
     get: getJobs,
     findByName: findJobByName,
     create: createJob,
     update: updateJob,
-    delete: deleteJob
-}
+    delete: deleteJob,
+};
 
 export default jobRepository;
