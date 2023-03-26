@@ -22,6 +22,9 @@ const generateStringMessage = (attributeName) =>
 const generateDateMessage = (attributeName) =>
     `Pole ${attributeName} musi być datą!`;
 
+const generateBooleanMessage = (attributeName) =>
+    `Pole ${attributeName} musi być prawdą albo fałszem!`;
+
 const messageGenerators = {
     generateRequiredMessage,
     generateMinNumberMessage,
@@ -30,7 +33,8 @@ const messageGenerators = {
     generateMaxLengthMessage,
     generateNumberMessage,
     generateStringMessage,
-    generateDateMessage
+    generateDateMessage,
+    generateBooleanMessage
 };
 
 export default messageGenerators;

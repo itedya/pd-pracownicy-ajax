@@ -1,4 +1,4 @@
-version: '3.9'
+version: "3.9"
 
 services:
   database:
@@ -8,15 +8,48 @@ services:
       - MYSQL_USER=administrator
       - MYSQL_PASSWORD=pracownicy-password
       - MYSQL_DATABASE=pracownicy
-  app:
-    build: ./api
+
+  phpmyadmin:
+    image: phpmyadmin
+    container_name: pracownicy-phpmyadmin
+    ports:
+      - 8080:80
+    environment:
+      - PMA_HOST=database
+    depends_on:
+      database:
+        condition: service_healthy
+
+  api:
+    build:
+      context: .
+      dockerfile: ./api/Dockerfile
     container_name: pracownicy-api
     ports:
-      - "80:3000"
-    environment:
-      WAIT_HOSTS: "database:3306"
+      - "3000:3000"
     depends_on:
       database:
         condition: service_healthy
     volumes:
-      - ./api:/app
+      - ./api:/app/api
+      - ./validation:/app/validation
+      - /app/api/node_modules
+      - /app/validation/node_modules
+
+  app:
+    build:
+      context: .
+      dockerfile: ./app/Dockerfile
+    container_name: pracownicy-app
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_APP_API_URL=http://localhost:3000/
+    depends_on:
+      api:
+        condition: service_started
+    volumes:
+      - ./app:/app/app
+      - ./validation:/app/validation
+      - /app/app/node_modules
+      - /app/validation/node_modules

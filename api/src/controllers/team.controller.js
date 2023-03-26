@@ -7,7 +7,7 @@ import {
     deleteTeamRequest,
     findTeamByIdRequest,
     updateTeamRequest,
-} from "../validators/team.validator.js";
+} from "@itedya/sor-tokajuk-pracownicy-ajax-validation";
 
 const get = errorCatcherMiddleware(async (req, res, next) => {
     const data = await findTeamByIdRequest.validate(req.body);
@@ -20,7 +20,7 @@ const get = errorCatcherMiddleware(async (req, res, next) => {
 });
 
 const getTeams = async (req, res, next) => {
-    const teams = await teamRepository.getTeams();
+    const teams = await db.transaction((trx) => teamRepository.getTeams(trx));
 
     res.status(200).json(teams.map((team) => team.sanitize()));
 };

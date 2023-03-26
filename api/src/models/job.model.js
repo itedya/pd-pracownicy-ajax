@@ -7,6 +7,12 @@ class Job extends Model {
         this.wageFrom = wageFrom;
         this.wageTo = wageTo;
     }
+
+    sanitize() {
+        const clonedObject = this;
+
+        return clonedObject;
+    }
 }
 
 export default Job;

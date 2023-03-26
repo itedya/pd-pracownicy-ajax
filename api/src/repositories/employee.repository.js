@@ -1,30 +1,69 @@
-import Employee from "../models/employee.model";
+import Employee from "../models/employee.model.js";
+import Team from "../models/team.model.js";
 
 /**
  * Get all employees
  *
  * @param {import("knex").Knex} trx Transaction object
+ * @param {boolean} withBoss Switch which controls if boss is needed to be selected
+ * @param {boolean} withTeam Switch which controls if team is needed to be selected
  * @returns {Promise<Employee[]>}
  */
-const getEmployees = (trx) => {
-    return trx
-        .select("*")
-        .from("employees")
-        .then((rows) =>
-            rows.map((row) => {
-                return new Employee(
-                    res.id,
-                    res.firstName,
-                    res.lastName,
-                    res.job,
-                    res.bossId,
-                    res.employeedFrom,
-                    res.basicWage,
-                    res.additionalWage,
-                    res.teamId
+const getEmployees = async (trx, withBoss = false, withTeam = false) => {
+    const query = trx.select("employees.*").from("employees");
+
+    if (withBoss) {
+        const columnsToJoin = await trx
+            .raw("SHOW COLUMNS FROM employees")
+            .then((results) => {
+                return results[0].map(
+                    (row) =>
+                        `employees_bosses.${row.Field} as employees_bosses_${row.Field}`
                 );
-            })
-        );
+            });
+
+        query
+            .leftJoin(
+                trx.raw("employees as employees_bosses"),
+                "employees_bosses.id",
+                "=",
+                "employees.boss_id"
+            )
+            .select(columnsToJoin.map((column) => trx.raw(column)));
+    }
+
+    if (withTeam) {
+        const columnsToJoin = await trx
+            .raw("SHOW COLUMNS FROM teams")
+            .then((results) => {
+                return results[0].map(
+                    (row) => `teams.${row.Field} as teams_${row.Field}`
+                );
+            });
+
+        query
+            .leftJoin("teams", "teams.id", "=", "employees.team_id")
+            .select(columnsToJoin.map((column) => trx.raw(column)));
+    }
+
+    return query.then((rows) =>
+        rows.map((row) => {
+            const employee = new Employee().fastAssign(row, ``);
+
+            if (withBoss) {
+                employee.boss = new Employee().fastAssign(
+                    row,
+                    `employees_bosses_`
+                );
+            }
+
+            if (withTeam) {
+                employee.team = new Team().fastAssign(row, `teams_`);
+            }
+
+            return employee;
+        })
+    );
 };
 
 /**
@@ -44,17 +83,9 @@ const findEmployeeById = (trx, id) => {
             if (res === undefined) {
                 return null;
             } else {
-                return new Employee(
-                    res.id,
-                    res.firstName,
-                    res.lastName,
-                    res.job,
-                    res.bossId,
-                    res.employeedFrom,
-                    res.basicWage,
-                    res.additionalWage,
-                    res.teamId
-                );
+                const employee = new Employee().fastAssign(res, "");
+
+                return employee;
             }
         });
 };
@@ -85,6 +116,7 @@ const createEmployee = (
     teamId
 ) => {
     return trx
+        .table("employees")
         .insert({
             first_name: firstName,
             last_name: lastName,
@@ -95,10 +127,9 @@ const createEmployee = (
             additional_wage: additionalWage,
             team_id: teamId,
         })
-        .returning("id")
-        .then((insertedId) => {
+        .then((insertedIds) => {
             return new Employee(
-                insertedId,
+                insertedIds[0],
                 firstName,
                 lastName,
                 job,
@@ -124,6 +155,7 @@ const createEmployee = (
  * @param {number} basicWage Basic wage
  * @param {number} additionalWage Additional waage
  * @param {number} teamId Team ID
+ * @returns {Promise<Employee>}
  */
 const updateEmployee = (
     trx,
@@ -149,7 +181,21 @@ const updateEmployee = (
             additional_wage: additionalWage,
             team_id: teamId,
         })
-        .where("id", id);
+        .where("id", id)
+        .then(
+            (res) =>
+                new Employee(
+                    id,
+                    firstName,
+                    lastName,
+                    job,
+                    bossId,
+                    employeedFrom,
+                    basicWage,
+                    additionalWage,
+                    teamId
+                )
+        );
 };
 
 /**
@@ -157,8 +203,25 @@ const updateEmployee = (
  *
  * @param {import("knex").Knex} trx Transaction object
  * @param {number} id Employee ID
+ * @returns {Promise<void>}
  */
-const deleteEmployee = (trx, id) => {};
+const deleteEmployee = async (trx, id) => {
+    await trx
+        .table("employees")
+        .update({
+            boss_id: null,
+        })
+        .where("boss_id", id);
+
+    await trx
+        .table("employees")
+        .where("id", id)
+        .del()
+        .catch((err) => {
+            console.log(JSON.parse(JSON.stringify(err)));
+            throw err;
+        });
+};
 
 const employeeRepository = {
     get: getEmployees,

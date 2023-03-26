@@ -19,7 +19,7 @@ then
 elif [ $1 = "--help" ]
 then
     print_help
-elif [ $1 = "--mysql-console" ] 
+elif [ $1 = "--mysql-console" ]
 then
     docker exec -it pracownicy-database mysql -uadministrator -p'pracownicy-password'
 fi

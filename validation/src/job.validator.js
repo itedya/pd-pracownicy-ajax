@@ -1,5 +1,5 @@
-import yup from "yup";
-import messageGenerators from "../helpers/validation-messages.helper.js";
+import * as yup from "yup";
+import messageGenerators from "./validation-messages.helper.js";
 
 const job = yup.object({
     name: yup

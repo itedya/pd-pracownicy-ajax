@@ -1,14 +1,17 @@
 FROM node:18-alpine
 
 RUN mkdir /app
-WORKDIR /app
 
-COPY . .
+COPY ./api /app/api
+COPY ./validation /app/validation
 
-ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.10.0/wait /wait
-RUN chmod +x /wait
-
+WORKDIR /app/validation
 RUN npm i
+RUN npm link
+
+WORKDIR /app/api
+RUN npm i
+RUN npm link @itedya/sor-tokajuk-pracownicy-ajax-validation
 
 EXPOSE 3000
 CMD ["npm", "run", "watch"]

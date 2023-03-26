@@ -8,6 +8,7 @@ import {
 import cors from "cors";
 import teamRouter from "./router/team.router.js";
 import jobRouter from "./router/job.router.js";
+import employeeRouter from "./router/employee.router.js";
 
 const createApp = async () => {
     if (!(await isDatabaseInitialized())) {
@@ -20,6 +21,7 @@ const createApp = async () => {
     app.use(cors("*"));
     app.use(bodyParser.json({}));
 
+    app.use("/employee", employeeRouter);
     app.use("/team", teamRouter);
     app.use("/job", jobRouter);
 

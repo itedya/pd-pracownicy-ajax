@@ -1,5 +1,5 @@
 {
-  "name": "@itedya/sor-tokajuk-pracownicy-api",
+  "name": "@itedya/sor-tokajuk-pracownicy-ajax-api",
   "version": "1.0.0",
   "description": "Projekt pracownicy - API",
   "main": "src/main.js",

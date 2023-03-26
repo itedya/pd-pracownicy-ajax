@@ -1,5 +1,5 @@
-import yup from "yup";
-import messageGenerator from "../helpers/validation-messages.helper.js";
+import * as yup from "yup";
+import messageGenerator from "./validation-messages.helper.js";
 
 const employee = yup.object({
     id: yup
@@ -32,14 +32,13 @@ const employee = yup.object({
     bossId: yup
         .number()
         .min(1, messageGenerator.generateMinNumberMessage("szef"))
-        .required(messageGenerator.generateRequiredMessage("szef"))
+        .nullable(messageGenerator.generateNumberMessage("szef"))
         .typeError(messageGenerator.generateNumberMessage("szef")),
 
-    // TODO: Add max date validation (not bigger than today)
     employeedFrom: yup
         .date()
-        .required(messageGenerator.generateRequiredMessage("zatrudniiony od"))
-        .typeError(messageGenerator.generateDateMessage("zatrudniiony od")),
+        .required(messageGenerator.generateRequiredMessage("zatrudniony od"))
+        .typeError(messageGenerator.generateDateMessage("zatrudniony od")),
 
     basicWage: yup
         .number()
@@ -67,7 +66,7 @@ const employee = yup.object({
                 100000000
             )
         )
-        .required(messageGenerator.generateRequiredMessage("płaca dodatkowa"))
+        .nullable(messageGenerator.generateNumberMessage("płaca dodatkowa"))
         .typeError(messageGenerator.generateNumberMessage("płaca dodatkowa")),
 
     teamId: yup
@@ -75,6 +74,18 @@ const employee = yup.object({
         .min(1, messageGenerator.generateMinNumberMessage("zespół", 1))
         .required(messageGenerator.generateRequiredMessage("zespół"))
         .typeError(messageGenerator.generateNumberMessage("zespół")),
+});
+
+const getAllEmployeesRequest = yup.object({
+    boss: yup
+        .boolean()
+        .default(false)
+        .typeError(messageGenerator.generateBooleanMessage("szef")),
+
+    team: yup
+        .boolean()
+        .default(false)
+        .typeError(messageGenerator.generateBooleanMessage("zespół")),
 });
 
 const findEmployeeByIdRequest = yup.object({
@@ -93,4 +104,5 @@ export {
     createEmployeeRequest,
     updateEmployeeRequest,
     deleteEmployeeRequest,
+    getAllEmployeesRequest,
 };
